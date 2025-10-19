@@ -15,8 +15,6 @@ let waitingPlayer = null; // Almacenará al jugador que está esperando oponente
 let gameRooms = {}; // Almacenará las partidas activas por nombre de sala
 
 // Función para generar la estructura de datos del laberinto en el servidor.
-// Por ahora, crea un laberinto aleatorio simple.
-// Para un proyecto más avanzado, podrías adaptar tu 'maze_generator_code.js' para que se ejecute aquí en Node.js.
 function generateServerMaze(width, height) {
     const cells = Array(width).fill(null).map(() => Array(height).fill(null));
     for (let x = 0; x < width; x++) {
@@ -29,9 +27,15 @@ function generateServerMaze(width, height) {
         }
     }
     // Asegurar que siempre haya un camino (simplificación)
-    for (let i = 0; i < width; i++) {
-        cells[i][Math.floor(height/2)].wall[2] = false;
-        cells[i][Math.floor(height/2)].wall[3] = false;
+    for (let i = 0; i < Math.max(width, height); i++) {
+        if (cells[i] && cells[i][Math.floor(height/2)]) {
+            cells[i][Math.floor(height/2)].wall[2] = false; // no hay pared izq
+            cells[i][Math.floor(height/2)].wall[3] = false; // no hay pared der
+        }
+         if (cells[Math.floor(width/2)] && cells[Math.floor(width/2)][i]) {
+            cells[Math.floor(width/2)][i].wall[0] = false; // no hay pared arriba
+            cells[Math.floor(width/2)][i].wall[1] = false; // no hay pared abajo
+        }
     }
 
     // Asegurar entrada y salida
